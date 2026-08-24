@@ -42,7 +42,54 @@ unit price.
 
 ## Findings
 
-_To be completed._
+## Findings
+
+### The two stores serve different customers, and it shows in the data
+
+Daily sales profiles identify what each store is, without any external
+information:
+
+| Day       | Store 733 | Store 198 |
+|-----------|-----------|-----------|
+| Mon–Fri   | ~15,000   | 2,700–4,200 |
+| Saturday  | 14,015    | 936       |
+| Sunday    | 15,144    | closed    |
+
+Store 733 trades every day of the week at an almost flat rate, Sundays
+included — the signature of a transit location (station or airport concourse)
+serving a passing flow rather than a resident catchment. Store 198 peaks on
+Monday, declines through the week and collapses on Saturday to a quarter of a
+weekday, indicating a commuter catchment that empties at the weekend.
+
+### Promotion, not uncertainty, drives most of the observed volatility
+
+Both stores run the same chain-wide promotion calendar (Mon–Fri, 71 of 133
+weeks). Their responses differ by an order of magnitude:
+
+| Store | Non-promo week | Promo week | Uplift | Variance explained by promotion | CV total → residual |
+|-------|----------------|------------|--------|--------------------------------|---------------------|
+| 198   | €10,884        | €22,062    | +103%  | 84.2%                          | 0.362 → 0.144       |
+| 733   | €100,448       | €108,365   | +8%    | 18.9%                          | 0.087 → 0.078       |
+
+This reframes the problem. Promotions are scheduled by the retailer and known
+weeks ahead, so the variance they explain is anticipated variation, not
+uncertainty. Safety stock exists to absorb what cannot be anticipated. Store
+198 is therefore not the volatile store it appears to be: its genuine demand
+uncertainty is CV 0.144, not 0.362.
+
+The practical implication is that forecasting investment does not pay off
+evenly across a store network. It is tested in notebook 02.
+
+### Hypotheses tested and rejected
+
+**Trading-day noise inflates store 198's volatility.** Rejected. Normalising
+weekly sales by the number of trading days reduced CV by only 3.5% (0.362 →
+0.349). 110 of 133 weeks have exactly six trading days, so dividing by a
+near-constant leaves the coefficient of variation almost unchanged.
+
+**Store 198's weak Saturdays are a data artefact.** Rejected. No open day
+records zero sales at either store. Saturday sales are consistently low
+(median €866, sd €327) and reflect genuine catchment behaviour.
 
 ## Repository structure
 
