@@ -41,7 +41,43 @@ All costs are expressed as rates on inventory *value*, avoiding an invented
 unit price.
 
 ## Findings
+### Forecast accuracy ranks the two stores in the wrong order
 
+Backtested with a rolling origin (53 replenishment decisions per store,
+seasonal naive baseline, protection period P = 3 weeks):
+
+| Store | Weekly MAPE | Safety stock as % of P-demand | Error autocorrelation |
+|-------|-------------|-------------------------------|-----------------------|
+| 198   | 23.9%       | 8.9%                          | 0.57                  |
+| 733   | 7.1%        | 18.3%                         | 1.13                  |
+
+Store 198 is 3.3x worse on MAPE yet requires less than half the safety stock
+in relative terms. The reason is that MAPE scores each week independently,
+while inventory is exposed to *cumulative* error across the protection period,
+and the two stores' errors aggregate differently.
+
+Store 198's forecast errors cancel: its promotion cycle alternates weekly, so
+any three-week window contains roughly 1.5 cycles and over- and under-forecasts
+offset. Its cumulative error is 57% of what the independence assumption
+predicts. Store 733's errors persist — the store is growing, so a seasonal
+baseline under-forecasts consistently — and its cumulative error is 113% of the
+predicted value.
+
+The textbook formula SS = z·σ·√L assumes independence and is wrong in both
+directions:
+
+| Store | Textbook SS | Empirical SS | Error | Annual carrying cost of the error |
+|-------|-------------|--------------|-------|-----------------------------------|
+| 198   | €16,298     | €9,252       | +€7,046 overstock  | €1,409               |
+| 733   | €25,296     | €28,578      | −€3,283 understock | €657                 |
+
+Store 733 additionally carries an uncorrected forecast bias of €10,110 over the
+protection period, costing €2,022 per year — the cheapest available saving in
+the project, since bias is a constant and can be removed by subtracting the
+historical mean error.
+
+These figures cover two stores selected for contrast, not a representative
+sample, and should not be extrapolated linearly to the 1,115-store network.
 ## Findings
 
 ### The two stores serve different customers, and it shows in the data

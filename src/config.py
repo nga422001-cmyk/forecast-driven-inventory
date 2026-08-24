@@ -84,3 +84,35 @@ GROSS_MARGIN = 0.25            # margin lost per EUR of unmet demand
 # Backtesting
 MIN_TRAIN_WEEKS = 78           # 1.5 years, enough for a seasonal-naive lookback
 SEASON_LENGTH = 52             # weekly data, yearly seasonality
+# ---------------------------------------------------------------------------
+# Inventory policy parameters
+#
+# The forecast horizon is not a free choice: it is dictated by the replenishment
+# policy. Under periodic review (R, S), an order placed now arrives after lead
+# time L, but the *next* order only arrives at R + L. On-hand stock must
+# therefore cover demand over the protection period P = R + L.
+#
+# Assumptions (also documented in README.md):
+#   R = 1 week  - Rossmann stores are assumed to replenish weekly, matching the
+#                 weekly granularity of the aggregated dataset.
+#   L = 2 weeks - Not available in the dataset. Chosen as a plausible regional
+#                 DC-to-store lead time for European drugstore retail. Treated
+#                 as a parameter, not a fact: notebook 05 stress-tests L in
+#                 {1, 2, 4} to check whether conclusions are robust to it.
+# ---------------------------------------------------------------------------
+
+REVIEW_PERIOD = 1                              # R, weeks
+LEAD_TIME = 2                                  # L, weeks
+PROTECTION_PERIOD = REVIEW_PERIOD + LEAD_TIME  # P, weeks
+HORIZON = PROTECTION_PERIOD                    # forecast horizon follows P
+
+# Inventory economics. Rossmann `Sales` is turnover in EUR, not quantity, so all
+# costs are expressed as rates on value rather than per-unit costs. This avoids
+# inventing an unobserved unit price.
+SERVICE_LEVEL = 0.95           # target cycle service level
+CARRYING_RATE_ANNUAL = 0.20    # holding cost, share of inventory value per year
+GROSS_MARGIN = 0.25            # margin lost per EUR of unmet demand
+
+# Backtesting
+MIN_TRAIN_WEEKS = 78           # 1.5 years, enough for a seasonal-naive lookback
+SEASON_LENGTH = 52             # weekly data, yearly seasonality
