@@ -333,17 +333,20 @@ the removed errors were the self-cancelling ones.
 
 ```
 ├── data/
-│   ├── raw/                  Rossmann train.csv (not committed)
-│   └── processed/            weekly aggregates
+│ ├── raw/ Rossmann train.csv (not committed)
+│ └── processed/ weekly aggregates
 ├── src/
-│   ├── config.py             all policy parameters in one place
-│   ├── data_loader.py        daily -> weekly aggregation
-│   └── backtest.py           rolling-origin backtesting and FVA
+│ ├── config.py all policy parameters in one place
+│ ├── data_loader.py daily -> weekly aggregation
+│ ├── forecasting.py forecast models, shared signature
+│ ├── backtest.py rolling-origin evaluation, promotion plan
+│ ├── inventory.py error decomposition, safety stock sizing
+│ └── simulate.py (R,S) policy simulation, service-cost frontier
 ├── notebooks/
-│   ├── 01_data_prep.ipynb    aggregation and store selection
-│   ├── 01b_data_audit.ipynb  closures, promotion, variance decomposition
-│   └── 02_forecasting.ipynb  backtest, simulation, frontier, stress test
-└── outputs/                  figures and result tables
+│ ├── 01_data_prep.ipynb aggregation and store selection
+│ ├── 01b_data_audit.ipynb closures, promotion, variance decomposition
+│ └── 02_forecasting.ipynb backtest, simulation, frontier, stress test
+└── outputs/ figures and result tables
 ```
 
 Notebooks tell the story; reusable logic lives in `src/`.
