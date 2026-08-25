@@ -187,6 +187,35 @@ definition moves the answer by more than the choice of forecasting model does.
 A related finding: at store 198, a configuration delivering 98% fill rate costs
 €2,786/year against €3,471 for one targeting 95% cycle service. A retailer whose
 true requirement is fill rate but whose policy is parameterised
+### Every conclusion above depends on an unobservable parameter
+
+Lead time is not in the dataset; L = 2 weeks was assumed at the outset. Re-running
+the full pipeline at L = 1, 2 and 4 shows the assumption is not innocuous.
+
+Annual saving from the promo-aware model at 95% cycle service:
+
+| Store | P = 2 (1.0 promo cycles) | P = 3 (1.5) | P = 5 (2.5) |
+|-------|--------------------------|-------------|-------------|
+| 198   | +€343                    | +€98        | **−€574**   |
+| 733   | **−€1,675**              | +€539       | **−€2,529** |
+
+The sign reverses at both stores. The conclusion reached under L = 2 — that the
+promo-aware model is worth funding — is an artefact of that specific assumption.
+
+Part of the mechanism is a parity effect. Store 198's promotion calendar
+alternates weekly, so the protection period spans 1.0, 1.5 or 2.5 promotion
+cycles depending on lead time. Its baseline error autocorrelation tracks this
+non-monotonically (0.41, 0.57, 0.44): cancellation is most complete when the
+protection period covers a whole number of cycles. Store 733, where promotion
+explains only 19% of variance, shows no such oscillation and rises monotonically
+(1.01, 1.13, 1.22).
+
+**Overall conclusion.** Three choices move the answer more than the choice of
+forecasting model does: the metric used to evaluate forecasts, the definition of
+service level, and the assumed lead time. Two are decisions the organisation can
+make deliberately; the third is a fact it should measure. A forecasting
+investment case built without settling all three is not evaluable, however
+carefully the models themselves are benchmarked.
 
 ### Hypotheses tested and rejected
 
