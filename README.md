@@ -1,8 +1,8 @@
 # Forecast-Driven Inventory Control
 
 Evaluating demand forecasts by their effect on inventory cost rather than by
-forecast accuracy — and finding that the evaluation criterion matters more than
-the forecast.
+forecast accuracy — and finding that a 62% gain in accuracy makes inventory
+cheaper in only 35% of plausible operating conditions.
 
 ## The question
 
@@ -21,15 +21,19 @@ of forecasting model does.
 
 ## Headline findings
 
-1. A model that improved weekly forecast error by 62% delivered **less** inventory
-   saving than one that improved error by 14%, because inventory is exposed to
-   cumulative error across the protection period, not to weekly error.
-2. Matched at identical achieved service, the better forecast saves €148/year
-   under a cycle-service target and **costs €978/year** under a fill-rate target.
-   The comparison reverses with the service definition.
-3. Re-running the pipeline at lead times of 1, 2 and 4 weeks reverses the sign of
-   the saving at both stores. Every conclusion above is conditional on an
-   assumption the dataset cannot verify.
+1. **A forecast that is 62% more accurate is the cheaper option only 35% of the
+   time.** Swept across 46 feasible combinations of lead time, service definition
+   and service target, the promo-aware model — which cuts weekly forecast error
+   by 62% at one store — is more expensive than the seasonal naive baseline in
+   roughly two thirds of them.
+2. **The accuracy gain and the inventory gain point at different stores.** A 62%
+   improvement in weekly error delivered 13x less saving than a 14% improvement,
+   because inventory is exposed to cumulative error across the protection period,
+   not to weekly error. Noise cancels over that window; bias does not.
+3. **The comparison reverses with the definition of service level.** Matched at
+   identical achieved service, the better forecast saves €148/year under a cycle
+   service target and costs €978/year under a fill-rate target — the same data,
+   the same models, opposite investment decisions.
 
 ## Data
 
@@ -280,21 +284,36 @@ protection period covers a whole number of cycles. Store 733, where promotion
 explains only 19% of variance, shows no such oscillation and rises monotonically
 (1.01, 1.13, 1.22).
 
-## Conclusion
 
-Three choices move the answer more than the choice of forecasting model does: the
-metric used to evaluate forecasts, the definition of service level, and the
-assumed lead time. Two are decisions an organisation can make deliberately; the
-third is a fact it should measure.
+### Measuring how often the conclusion survives
 
-A forecasting investment case built without settling all three is not evaluable,
-however carefully the models themselves are benchmarked. The recommendation from
-this analysis is not a model. It is to fix the evaluation criteria first, and to
-measure lead time before spending anything on forecasting.
+Rather than showing that a policy tolerates changed assumptions, the sweep
+measures how often the *recommendation* does. Three dimensions are varied — lead
+time (1–4 weeks), service definition (cycle service and fill rate) and service
+target (three levels each) — giving 48 parameter settings, 46 of which are
+feasible for both models.
 
-Where a model must be chosen, stores should be prioritised by **error bias** and
-**error autocorrelation**, not by MAPE. A noisy but unbiased forecast on a short
-protection period may need no improvement at all.
+The carrying rate is deliberately not swept. Under cost minimisation subject to a
+service constraint it is a pure multiplier: it scales both models identically and
+cannot change which is cheaper. Sweeping it yields a larger table and no
+information.
+
+**The promo-aware model is cheaper in 35% of settings** (32% at store 198, 38% at
+store 733). A model that reduces weekly forecast error by 62% is the more
+expensive option in roughly two thirds of the plausible parameter space — and the
+figure sits below 50%, so this is a systematic tendency rather than noise.
+
+The pattern is orderly. The promo-aware model wins at short lead times and low
+service targets, and loses at long lead times and high targets:
+
+| Store 198, cycle service | P=2 | P=3 | P=4 | P=5 |
+|--------------------------|-----|-----|-----|-----|
+| 90% | +€296 | +€194 | +€273 | −€236 |
+| 95% | +€343 | +€98 | +€177 | −€574 |
+| 98% | n/a | n/a | −€2,606 | −€2,940 |
+
+This is the same mechanism throughout. At low service targets cost is set by the
+centre of the error distribution, where the promo-aware
 
 ## Hypotheses tested and rejected
 
