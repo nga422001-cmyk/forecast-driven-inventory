@@ -78,7 +78,7 @@ Assumptions are therefore explicit and treated as parameters, not facts:
 | Parameter | Value | Basis |
 |-----------|-------|-------|
 | Review period R | 1 week | Matches data granularity |
-| Lead time L | 2 weeks | Assumed regional DC-to-store; stress-tested at 1, 2, 4 |
+| Lead time L | 2 weeks | Assumed regional DC-to-store; stress-tested at 1–4 weeks |
 | Carrying rate | 20% / year | Standard retail range |
 | Gross margin | 25% | Drugstore retail benchmark |
 | Service level | 95% cycle service | Also evaluated on fill rate |
@@ -313,7 +313,33 @@ service targets, and loses at long lead times and high targets:
 | 98% | n/a | n/a | −€2,606 | −€2,940 |
 
 This is the same mechanism throughout. At low service targets cost is set by the
-centre of the error distribution, where the promo-aware
+centre of the error distribution, where the promo-aware model wins decisively. At
+high targets cost is set by the tail, and its error autocorrelation of 1.40 means
+errors accumulate rather than cancel there. Operating practice sits in the
+lower-right corner of that table: no retailer targets 90% service on a one-week
+lead time.
+
+Two cells are undefined because neither model reaches 98% cycle service at store
+198 within the observed data. That is a result, not a gap: a retailer committing
+to that target at this store would be committing to something the data cannot
+demonstrate.
+
+## Conclusion
+
+Three choices move the answer more than the choice of forecasting model does: the
+metric used to evaluate forecasts, the definition of service level, and the
+assumed lead time. Two are decisions an organisation can make deliberately; the
+third is a fact it should measure.
+
+Quantified across the plausible parameter space, the forecast that is clearly
+better on accuracy is the cheaper option only 35% of the time — and its advantage
+is concentrated in the region where operations do not run.
+
+The recommendation from this analysis is therefore not a model. It is to fix the
+evaluation criteria first, measure lead time before spending anything on
+forecasting, and prioritise stores by **error bias** and **error autocorrelation**
+rather than by MAPE. A noisy but unbiased forecast on a short protection period
+may need no improvement at all.
 
 ## Hypotheses tested and rejected
 
@@ -334,10 +360,11 @@ the removed errors were the self-cancelling ones.
 
 - **Two stores, chosen for contrast.** These are not a representative sample and
   results should not be extrapolated linearly to the 1,115-store network.
-- **Service-level resolution.** Service level is estimated over ~113 scored weeks,
-  giving a resolution of about 0.9 percentage points. At a 95% target only ~5
-  stockout events are observed, so the region above 97% is supported by very few
-  observations.
+- **Service-level resolution.** Each configuration is scored over 43 weeks
+  (53 origins less a 10-week warm-up), so achieved service can only take values
+  in steps of 1/43 ≈ 2.3 percentage points. At a 95% target roughly two stockout
+  events are observed per configuration, so tail estimates rest on very few
+  observations and differences under about 2 points are not distinguishable.
 - **Turnover, not units.** Rossmann records euros. Holding cost is applied as a
   rate on value; no unit economics are inferred.
 - **No supply-side data.** Lead time, order costs, minimum order quantities and
@@ -350,25 +377,30 @@ the removed errors were the self-cancelling ones.
 
 ## Repository structure
 
-```
+
+```text
 ├── data/
-│ ├── raw/ Rossmann train.csv (not committed)
-│ └── processed/ weekly aggregates
+│   ├── raw/                  Rossmann train.csv (not committed)
+│   └── processed/            weekly aggregates
 ├── src/
-│ ├── config.py all policy parameters in one place
-│ ├── data_loader.py daily -> weekly aggregation
-│ ├── forecasting.py forecast models, shared signature
-│ ├── backtest.py rolling-origin evaluation, promotion plan
-│ ├── inventory.py error decomposition, safety stock sizing
-│ └── simulate.py (R,S) policy simulation, service-cost frontier
+│   ├── config.py             all policy parameters in one place
+│   ├── data_loader.py        daily -> weekly aggregation
+│   ├── forecasting.py        forecast models, shared signature
+│   ├── backtest.py           rolling-origin evaluation, promotion plan
+│   ├── inventory.py          error decomposition, safety stock sizing
+│   ├── simulate.py           (R,S) policy simulation, service-cost frontier
+│   └── sensitivity.py        multi-dimensional robustness sweep
 ├── notebooks/
-│ ├── 01_data_prep.ipynb aggregation and store selection
-│ ├── 01b_data_audit.ipynb closures, promotion, variance decomposition
-│ └── 02_forecasting.ipynb backtest, simulation, frontier, stress test
-└── outputs/ figures and result tables
+│   ├── 01_data_prep.ipynb    aggregation and store selection
+│   ├── 01b_data_audit.ipynb  closures, promotion, variance decomposition
+│   └── 02_forecasting.ipynb  backtest, simulation, frontier, stress test
+└── outputs/                  figures and result tables
 ```
 
-Notebooks tell the story; reusable logic lives in `src/`.
+Notebooks tell the story; all reusable logic lives in `src/`. Adding a forecast
+model means adding a function to `forecasting.py` with the shared signature — no
+change to the backtesting loop.
+```
 
 ## Reproducing
 
