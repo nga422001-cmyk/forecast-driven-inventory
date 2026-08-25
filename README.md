@@ -261,29 +261,6 @@ At store 198, a configuration delivering 98% fill rate costs €2,786/year again
 fill rate but whose policy is parameterised on cycle service overpays by roughly
 25% for a target it does not need.
 
-### Every conclusion above depends on an unobservable parameter
-
-Lead time is not in the dataset; L = 2 weeks was assumed at the outset. Re-running
-the full pipeline at L = 1, 2 and 4 shows the assumption is not innocuous.
-
-Annual saving from the promo-aware model at 95% cycle service:
-
-| Store | P = 2 (1.0 promo cycles) | P = 3 (1.5) | P = 5 (2.5) |
-|-------|--------------------------|-------------|-------------|
-| 198   | +€343                    | +€98        | **−€574**   |
-| 733   | **−€1,675**              | +€539       | **−€2,529** |
-
-The sign reverses at both stores. The conclusion reached under L = 2 — that the
-promo-aware model is worth funding — is an artefact of that specific assumption.
-
-Part of the mechanism is a parity effect. Store 198's promotion calendar
-alternates weekly, so the protection period spans 1.0, 1.5 or 2.5 promotion cycles
-depending on lead time. Its baseline error autocorrelation tracks this
-non-monotonically (0.41, 0.57, 0.44): cancellation is most complete when the
-protection period covers a whole number of cycles. Store 733, where promotion
-explains only 19% of variance, shows no such oscillation and rises monotonically
-(1.01, 1.13, 1.22).
-
 
 ### Measuring how often the conclusion survives
 
@@ -311,6 +288,14 @@ service targets, and loses at long lead times and high targets:
 | 90% | +€296 | +€194 | +€273 | −€236 |
 | 95% | +€343 | +€98 | +€177 | −€574 |
 | 98% | n/a | n/a | −€2,606 | −€2,940 |
+Lead time is the dimension that matters most, and it is the one the dataset
+cannot settle. Store 198's promotion calendar alternates weekly, so the
+protection period spans 1.0, 1.5, 2.0 or 2.5 promotion cycles depending on lead
+time. Its baseline error autocorrelation tracks this non-monotonically (0.41,
+0.57, 0.44 at P = 2, 3, 5): cancellation is most complete when the protection
+period covers a whole number of cycles. Store 733, where promotion explains only
+19% of variance, shows no such oscillation and rises monotonically (1.01, 1.13,
+1.22).
 
 This is the same mechanism throughout. At low service targets cost is set by the
 centre of the error distribution, where the promo-aware model wins decisively. At
@@ -400,7 +385,6 @@ the removed errors were the self-cancelling ones.
 Notebooks tell the story; all reusable logic lives in `src/`. Adding a forecast
 model means adding a function to `forecasting.py` with the shared signature — no
 change to the backtesting loop.
-```
 
 ## Reproducing
 
