@@ -288,6 +288,7 @@ service targets, and loses at long lead times and high targets:
 | 90% | +€296 | +€194 | +€273 | −€236 |
 | 95% | +€343 | +€98 | +€177 | −€574 |
 | 98% | n/a | n/a | −€2,606 | −€2,940 |
+
 Lead time is the dimension that matters most, and it is the one the dataset
 cannot settle. Store 198's promotion calendar alternates weekly, so the
 protection period spans 1.0, 1.5, 2.0 or 2.5 promotion cycles depending on lead
