@@ -115,6 +115,47 @@ uncertainty is CV 0.144, not 0.362.
 
 The practical implication is that forecasting investment does not pay off
 evenly across a store network. It is tested in notebook 02.
+### The accuracy gain and the inventory gain point at different stores
+
+A promo-aware conditional mean — the mean of recent promotion weeks and the
+mean of recent non-promotion weeks, selected by the published plan — replaces
+the seasonal naive baseline. No machine learning is involved, so any gain is
+attributable to the information rather than to model complexity.
+
+| Store | MAE improvement | Inventory reduction | Annual saving |
+|-------|-----------------|---------------------|---------------|
+| 198   | −62%            | −8%                 | €160          |
+| 733   | −14%            | −28%                | €2,175        |
+
+The store with the larger accuracy gain delivers 13x less value. Ranking stores
+by forecast accuracy would direct investment to the wrong one.
+
+The mechanism is visible in the error autocorrelation factor — the ratio of
+observed cumulative error to what independent weekly errors would produce:
+
+| Store | Model | Autocorrelation | Bias stock | Safety stock |
+|-------|-------|-----------------|------------|--------------|
+| 198   | seasonal naive | 0.60 | €259    | €9,252  |
+| 198   | promo-aware    | 1.40 | €29     | €8,684  |
+| 733   | seasonal naive | 1.10 | €10,110 | €28,578 |
+| 733   | promo-aware    | 1.10 | €1,361  | €26,453 |
+
+Store 198's baseline errors alternate with the promotion cycle: it over-forecasts
+in one week and under-forecasts in the next, and the two offset within any
+three-week protection period (factor 0.60). The promo-aware model removes those
+errors — and removes the cancellation with them (factor 1.40). Weekly error falls
+62% while cumulative error falls 6%. The protection period was already absorbing
+most of the problem for free.
+
+Store 733's saving comes almost entirely from bias, which accumulates linearly
+across the protection period and never cancels. Its bias stock falls from €10,110
+to €1,361 — 93% of the total saving in this project — and the cause is not the
+promotion information but the shorter estimation window, which tracks the store's
+growth where a 52-week lookback lags it.
+
+**Implication.** Forecast investment should be prioritised by error bias and error
+autocorrelation, not by MAPE. A noisy but unbiased forecast on a short protection
+period may need no improvement at all.
 
 ### Hypotheses tested and rejected
 
