@@ -156,6 +156,37 @@ growth where a 52-week lookback lags it.
 **Implication.** Forecast investment should be prioritised by error bias and error
 autocorrelation, not by MAPE. A noisy but unbiased forecast on a short protection
 period may need no improvement at all.
+### The comparison reverses depending on how service level is defined
+
+Sweeping safety stock on a fine grid and matching the two models at identical
+achieved service produces opposite conclusions under the two standard service
+definitions:
+
+| Store | Target | Baseline | Promo-aware | Saving |
+|-------|--------|----------|-------------|--------|
+| 198 | 95% cycle service | €3,471 | €3,323 | **+€148** |
+| 198 | 99% fill rate     | €3,141 | €4,119 | **−€978** |
+| 733 | 95% cycle service | €15,749 | €15,058 | **+€691** |
+| 733 | 98% cycle service | €16,077 | €19,304 | **−€3,226** |
+
+Cycle service counts whether a stockout occurred; fill rate measures how much
+demand went unmet. The promo-aware model stocks out less often but more deeply:
+it compresses the centre of the error distribution without compressing the tail,
+consistent with its error autocorrelation rising from 0.60 to 1.40. On a
+counting metric it wins; on a depth metric it loses.
+
+The consequence is organisational rather than technical. An operations team
+tracking cycle service and a commercial team committed to a fill-rate SLA would
+reach opposite investment decisions from the same data, and each would be
+correct on its own metric.
+
+**Conclusion.** Whether a better forecast is worth funding cannot be answered
+until the service definition is fixed. In this dataset the choice of service
+definition moves the answer by more than the choice of forecasting model does.
+
+A related finding: at store 198, a configuration delivering 98% fill rate costs
+€2,786/year against €3,471 for one targeting 95% cycle service. A retailer whose
+true requirement is fill rate but whose policy is parameterised
 
 ### Hypotheses tested and rejected
 
